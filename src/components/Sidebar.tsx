@@ -78,7 +78,7 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="px-6 py-3 border-t border-[#1f506a]/30 text-[10px] text-[#c1ddfa] opacity-30">
-        Falconer Capital Fund III
+        Al Falaj Capital Fund III
       </div>
     </aside>
   );

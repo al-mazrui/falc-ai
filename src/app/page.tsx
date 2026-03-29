@@ -51,7 +51,7 @@ export default function PortfolioPage() {
             Portfolio Overview
           </h1>
           <p className="text-sm text-[#c1ddfa] opacity-60 mt-1">
-            Falconer Capital Fund III — {summary.totalDeals} active investments
+            Al Falaj Capital Fund III — {summary.totalDeals} active investments
           </p>
         </div>
 

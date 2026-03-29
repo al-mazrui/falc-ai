@@ -79,26 +79,26 @@ export interface Deal {
 // ============================================================
 
 const sectors = [
-  "Steel Manufacturing", "Automotive Parts", "Petrochemicals", "Mining",
-  "Heavy Machinery", "Cement & Construction", "Energy Infrastructure",
-  "Shipping & Logistics", "Industrial Gases", "Aluminum Smelting",
-  "Copper Mining", "Glass Manufacturing", "Textile Manufacturing",
-  "Pharmaceutical Manufacturing", "Agricultural Processing",
-  "Semiconductor Fabrication", "Railway Equipment", "Pulp & Paper",
-  "Defense Manufacturing", "Specialty Chemicals"
+  "Oil & Gas Upstream", "Petrochemicals", "Steel & Metals", "Cement & Construction",
+  "Shipping & Ports", "Fisheries & Aquaculture", "Mining & Quarrying",
+  "Energy Infrastructure", "Water & Desalination", "Real Estate Development",
+  "Telecommunications", "Automotive & Transport", "Food Processing",
+  "Pharmaceutical Manufacturing", "Agriculture & Dates",
+  "Industrial Gases", "Aviation & MRO", "Marble & Stone",
+  "Defense & Security", "LNG & Gas Processing"
 ];
 
 const countries = [
-  "Germany", "India", "Brazil", "Turkey", "South Africa",
-  "Poland", "Mexico", "Indonesia", "Saudi Arabia", "Vietnam",
-  "Egypt", "Nigeria", "Czech Republic", "Colombia", "Philippines",
-  "Thailand", "Morocco", "Kazakhstan", "Chile", "Romania"
+  "Oman", "Oman", "Oman", "UAE", "Saudi Arabia",
+  "Oman", "Oman", "Bahrain", "Oman", "Oman",
+  "Qatar", "Kuwait", "Oman", "Oman", "Oman",
+  "UAE", "Oman", "Oman", "Oman", "Oman"
 ];
 
 const jurisdictions = [
-  "Luxembourg", "Netherlands", "Cayman Islands", "Jersey", "BVI",
-  "Mauritius", "Singapore", "Delaware (US)", "Ireland", "Cyprus",
-  "Malta", "Hong Kong", "UAE (DIFC)", "Liechtenstein", "Guernsey"
+  "UAE (DIFC)", "UAE (ADGM)", "Cayman Islands", "BVI", "Jersey",
+  "Bahrain", "Singapore", "Luxembourg", "Mauritius", "Cyprus",
+  "Oman (SAOC)", "Qatar (QFC)", "Saudi Arabia", "Hong Kong", "Netherlands"
 ];
 
 const securityTypes = [
@@ -380,7 +380,7 @@ function generateSPVChain(targetCompany: string, country: string, ownershipPct: 
 
   chain.push({
     id: "fund",
-    name: "Falconer Capital Fund III",
+    name: "Al Falaj Capital Fund III",
     jurisdiction: "Cayman Islands",
     ownershipPct: 100,
     type: "fund",
@@ -388,7 +388,7 @@ function generateSPVChain(targetCompany: string, country: string, ownershipPct: 
 
   chain.push({
     id: "holdco",
-    name: `Falconer ${spvJurisdictions[0]} Holdings Ltd`,
+    name: `Al Falaj ${spvJurisdictions[0]} Holdings Ltd`,
     jurisdiction: spvJurisdictions[0],
     ownershipPct: 100,
     parentId: "fund",
@@ -398,7 +398,7 @@ function generateSPVChain(targetCompany: string, country: string, ownershipPct: 
   const midPct = Math.round(ownershipPct * (1 + Math.random() * 0.3));
   chain.push({
     id: "spv1",
-    name: `FC ${targetCompany.split(" ")[0]} Investments ${spvJurisdictions[1]}`,
+    name: `AF ${targetCompany.split(" ")[0]} Investments ${spvJurisdictions[1]}`,
     jurisdiction: spvJurisdictions[1],
     ownershipPct: Math.min(midPct, 100),
     parentId: "holdco",
@@ -408,7 +408,7 @@ function generateSPVChain(targetCompany: string, country: string, ownershipPct: 
   if (Math.random() > 0.4) {
     chain.push({
       id: "spv2",
-      name: `FC ${targetCompany.split(" ")[0]} Sub Ltd`,
+      name: `AF ${targetCompany.split(" ")[0]} Sub Ltd`,
       jurisdiction: spvJurisdictions[2],
       ownershipPct: Math.min(midPct, 100),
       parentId: "spv1",
@@ -442,13 +442,13 @@ function generateSPVChain(targetCompany: string, country: string, ownershipPct: 
 // ============================================================
 
 const targetCompanies = [
-  "Rheinstahl AG", "Tata Forge Industries", "Petrobras Polymers SA",
-  "Anatolian Cement Corp", "Kumba Iron Ore Ltd", "Vistula Engineering Sp.z.o.o.",
-  "Monterrey Automotive SA de CV", "Sinar Mas Heavy Industries", "SABIC Derivatives Ltd",
-  "Saigon Steel Corporation", "Cairo Glass Manufacturing SAE", "Dangote Fabrication Plc",
-  "Škoda Precision Components AS", "Cementos Argos SA", "Manila Semiconductor Corp",
-  "Siam Industrial Gases PCL", "OCP Specialty Chemicals SA", "KazMinerals Processing LLP",
-  "Codelco Equipment SpA", "Transylvania Pulp & Paper SRL"
+  "Al Jabal Oil & Gas SAOC", "Oman Petrochemical Industries SAOG", "Muscat Steel & Metals Co.",
+  "Raysut Cement SAOG", "Sohar Port & Freezone Co.", "Al Wusta Fisheries LLC",
+  "Al Batinah Mining SAOC", "Mazoon Energy Holdings SAOC", "Barka Desalination SAOC",
+  "Al Mouj Real Estate SAOC", "Nawras Telecom SAOG", "Salalah Automotive LLC",
+  "Dhofar Food Processing SAOG", "Al Hayat Pharma SAOC", "Nizwa Dates & Agriculture Co.",
+  "Jebel Ali Industrial Gases FZE", "Oman Aviation Services SAOC", "Al Jabal Al Akhdar Marble SAOC",
+  "Muscat Defense Systems SAOC", "Qalhat LNG Processing SAOC"
 ];
 
 export function generateDeals(): Deal[] {
