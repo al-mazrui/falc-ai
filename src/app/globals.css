@@ -8,6 +8,21 @@
   --color-gold: #98802e;
   --color-gold-light: #b89d3e;
   --color-gold-dark: #7a6824;
+
+  /* Light palette */
+  --color-page: #F8F7F4;
+  --color-card: #FFFFFF;
+  --color-border: #E8E5DF;
+  --color-text: #2D2D2D;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+
+  /* Status colors - muted professional */
+  --color-status-critical: #C4434A;
+  --color-status-warning: #D4952A;
+  --color-status-ok: #2D8659;
+  --color-status-neutral: #94A3B8;
+  --color-status-info: #4A7FB5;
 }
 
 @font-face {
@@ -28,8 +43,8 @@
 
 body {
   font-family: 'Arsenal', sans-serif;
-  background-color: #0d2233;
-  color: #ffffff;
+  background-color: #F8F7F4;
+  color: #2D2D2D;
 }
 
 /* Custom scrollbar */
@@ -39,25 +54,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #143449;
+  background: #F0EFEC;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f506a;
+  background: #D1CFC9;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #98802e;
-}
-
-/* GitHub-style heatmap cells */
-.heatmap-cell {
-  transition: all 0.15s ease;
-}
-
-.heatmap-cell:hover {
-  stroke: #98802e;
-  stroke-width: 2;
-  filter: brightness(1.3);
 }

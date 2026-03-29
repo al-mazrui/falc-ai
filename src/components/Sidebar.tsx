@@ -8,9 +8,9 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 shrink-0 bg-[#0a1c2b] border-r border-[#1f506a]/30 flex flex-col h-screen sticky top-0 overflow-hidden">
+    <aside className="w-64 shrink-0 bg-[#143449] flex flex-col h-screen sticky top-0 overflow-hidden">
       {/* Logo */}
-      <Link href="/" className="block px-6 pt-6 pb-4 border-b border-[#1f506a]/30">
+      <Link href="/" className="block px-6 pt-6 pb-4 border-b border-white/10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded bg-[#98802e] flex items-center justify-center">
             <span className="text-white font-bold text-sm">F</span>
@@ -19,7 +19,7 @@ export default function Sidebar() {
             <div className="text-lg font-bold text-white tracking-wide">
               FALC<span className="text-[#98802e]">.AI</span>
             </div>
-            <div className="text-[9px] text-[#c1ddfa] opacity-60 -mt-0.5 tracking-widest uppercase">
+            <div className="text-[9px] text-white/40 -mt-0.5 tracking-widest uppercase">
               Portfolio Intelligence
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function Sidebar() {
           className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm mb-1 transition-colors ${
             pathname === "/"
               ? "bg-[#98802e]/20 text-[#98802e] font-bold"
-              : "text-[#c1ddfa] hover:bg-[#1f506a]/30"
+              : "text-white/70 hover:bg-white/10"
           }`}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -48,7 +48,7 @@ export default function Sidebar() {
 
       {/* Deal list */}
       <div className="px-3 mt-1">
-        <div className="text-[10px] uppercase tracking-widest text-[#c1ddfa] opacity-40 px-3 mb-2">
+        <div className="text-[10px] uppercase tracking-widest text-white/30 px-3 mb-2">
           Target Companies
         </div>
       </div>
@@ -64,11 +64,11 @@ export default function Sidebar() {
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs mb-0.5 transition-colors ${
                 isActive
                   ? "bg-[#98802e]/20 text-[#98802e] font-bold"
-                  : "text-[#c1ddfa] hover:bg-[#1f506a]/30"
+                  : "text-white/70 hover:bg-white/10"
               }`}
             >
               {hasOverdue && (
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C4434A] shrink-0" />
               )}
               <span className="truncate">{deal.targetCompany}</span>
             </Link>
@@ -77,7 +77,7 @@ export default function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-3 border-t border-[#1f506a]/30 text-[10px] text-[#c1ddfa] opacity-30">
+      <div className="px-6 py-3 border-t border-white/10 text-[10px] text-white/30">
         Al Falaj Capital Fund III
       </div>
     </aside>

@@ -21,9 +21,9 @@ function Section({
   partnerView?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[#1f506a]/30 bg-[#143449] overflow-hidden">
-      <div className="flex items-center justify-between px-6 py-3 border-b border-[#1f506a]/30 bg-[#0d2233]">
-        <h2 className="text-base font-bold text-white">{title}</h2>
+    <div className="bg-white rounded-xl border border-[#E8E5DF] overflow-hidden">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-[#E8E5DF]">
+        <h2 className="text-base font-bold text-[#143449]">{title}</h2>
         <div className="flex items-center gap-2">
           {partnerView && (
             <span className="text-[9px] bg-[#98802e] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider">
@@ -31,7 +31,7 @@ function Section({
             </span>
           )}
           {badge && (
-            <span className="text-[10px] bg-red-900/50 text-red-300 px-2 py-0.5 rounded font-bold">
+            <span className="text-[10px] bg-[#C4434A] text-white px-2 py-0.5 rounded font-bold">
               {badge}
             </span>
           )}
@@ -47,32 +47,30 @@ function KeyMetric({
   value,
   sub,
   alert,
+  gold,
 }: {
   label: string;
   value: string;
   sub?: string;
   alert?: boolean;
+  gold?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-lg px-4 py-3 border ${
-        alert
-          ? "border-red-700/40 bg-[#1a1015]"
-          : "border-[#1f506a]/30 bg-[#0d2233]"
-      }`}
-    >
-      <div className="text-[10px] text-[#c1ddfa] opacity-50">{label}</div>
+    <div className="bg-white rounded-xl px-4 py-3 border border-[#E8E5DF]">
+      <div className="text-[10px] text-[#9CA3AF]">{label}</div>
       <div
         className={`text-xl font-bold mt-0.5 ${
-          alert ? "text-red-400" : "text-white"
+          alert
+            ? "text-[#C4434A]"
+            : gold
+            ? "text-[#98802e]"
+            : "text-[#143449]"
         }`}
       >
         {value}
       </div>
       {sub && (
-        <div className="text-[10px] text-[#c1ddfa] opacity-40 mt-0.5">
-          {sub}
-        </div>
+        <div className="text-[10px] text-[#9CA3AF] mt-0.5">{sub}</div>
       )}
     </div>
   );
@@ -88,10 +86,10 @@ export default function DealPage({
 
   if (!deal) {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-[#F8F7F4]">
         <Sidebar />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-[#c1ddfa] text-lg">Deal not found.</div>
+          <div className="text-[#6B7280] text-lg">Deal not found.</div>
         </main>
       </div>
     );
@@ -109,39 +107,77 @@ export default function DealPage({
     (a) => a.requiresPhysicalPresence
   ).length;
 
+  const healthColor =
+    deal.financialHealthScore >= 75
+      ? "#2D8659"
+      : deal.financialHealthScore >= 50
+      ? "#D4952A"
+      : "#C4434A";
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#F8F7F4]">
       <Sidebar />
       <main className="flex-1 overflow-x-hidden">
         {/* Header */}
-        <div className="border-b border-[#1f506a]/30 px-8 py-6 bg-gradient-to-r from-[#0d2233] to-[#143449]">
+        <div className="border-b border-[#E8E5DF] px-8 py-6 bg-white">
           <Link
             href="/"
-            className="text-xs text-[#c1ddfa] opacity-50 hover:opacity-80 transition-opacity"
+            className="text-xs text-[#9CA3AF] hover:text-[#98802e] transition-colors"
           >
             ← Back to Portfolio
           </Link>
-          <h1 className="text-2xl font-bold text-white mt-2">
-            {deal.targetCompany}
-          </h1>
-          <p className="text-sm text-[#c1ddfa] opacity-60 mt-1">
-            {deal.sector} • {deal.country} • Since{" "}
-            {new Date(deal.dealDate).toLocaleDateString("en-US", {
-              month: "short",
-              year: "numeric",
-            })}
-          </p>
-          <p className="text-xs text-[#c1ddfa] opacity-40 mt-1">
-            {deal.instrumentDescription}
-          </p>
+          <div className="flex items-center gap-4 mt-2">
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-[#143449]">
+                {deal.targetCompany}
+              </h1>
+              <p className="text-sm text-[#6B7280] mt-1">
+                {deal.sector} · {deal.country} · Since{" "}
+                {new Date(deal.dealDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
+              <p className="text-xs text-[#9CA3AF] mt-1">
+                {deal.instrumentDescription}
+              </p>
+            </div>
+            {/* Large health ring */}
+            <div className="relative w-16 h-16 shrink-0">
+              <svg viewBox="0 0 36 36" className="w-16 h-16">
+                <circle
+                  cx="18" cy="18" r="15"
+                  fill="none"
+                  stroke="#E8E5DF"
+                  strokeWidth="2.5"
+                />
+                <circle
+                  cx="18" cy="18" r="15"
+                  fill="none"
+                  stroke={healthColor}
+                  strokeWidth="2.5"
+                  strokeDasharray={`${deal.financialHealthScore * 0.942} 100`}
+                  strokeLinecap="round"
+                  transform="rotate(-90 18 18)"
+                />
+              </svg>
+              <span
+                className="absolute inset-0 flex items-center justify-center text-sm font-bold"
+                style={{ color: healthColor }}
+              >
+                {deal.financialHealthScore}%
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="px-8 py-6 space-y-6">
           {/* KPI Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             <KeyMetric
               label="Total Investment"
               value={`$${(deal.totalInvestment / 1e6).toFixed(0)}M`}
+              gold
             />
             <KeyMetric
               label="Ownership"
@@ -168,13 +204,32 @@ export default function DealPage({
               }
             />
             <KeyMetric
-              label="Financial Health"
-              value={`${deal.financialHealthScore}%`}
-              alert={deal.financialHealthScore < 60}
+              label="Admin Burden"
+              value={`${deal.adminBurdenScore}/100`}
+              alert={deal.adminBurdenScore > 70}
             />
           </div>
 
-          {/* ========== PARTNER VIEW: Sections 1 & 2 ========== */}
+          {/* ========== PARTNER VIEW ========== */}
+
+          {/* Overdue alert banner */}
+          {penaltiesAccruing.length > 0 && (
+            <div className="rounded-xl bg-[#FDF0F0] border border-[#C4434A]/20 px-6 py-4">
+              <div className="text-sm font-bold text-[#C4434A] mb-2">
+                Active Penalties Accruing
+              </div>
+              {penaltiesAccruing.map((p) => (
+                <div key={p.id} className="text-xs text-[#C4434A]/80 mb-1">
+                  <span className="font-bold">{p.description}:</span>{" "}
+                  ${(p.amount / 1e6).toFixed(2)}M overdue —{" "}
+                  <span className="font-bold">
+                    {((p.penaltyRate || 0) * 100).toFixed(2)}%/day
+                  </span>{" "}
+                  penalty since {p.dueDate}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* 1. Financial Obligations */}
           <Section
@@ -186,23 +241,6 @@ export default function DealPage({
             }
             partnerView
           >
-            {/* Overdue alert banner */}
-            {penaltiesAccruing.length > 0 && (
-              <div className="mb-4 rounded-lg bg-red-900/30 border border-red-700/50 px-4 py-3">
-                <div className="text-sm font-bold text-red-300 mb-1">
-                  ⚠ Active Penalties Accruing
-                </div>
-                {penaltiesAccruing.map((p) => (
-                  <div key={p.id} className="text-xs text-red-300/80">
-                    {p.description}: ${(p.amount / 1e6).toFixed(2)}M overdue —{" "}
-                    <span className="font-bold">
-                      {((p.penaltyRate || 0) * 100).toFixed(2)}%/day
-                    </span>{" "}
-                    penalty accruing since {p.dueDate}
-                  </div>
-                ))}
-              </div>
-            )}
             <PaymentTimeline payments={deal.payments} />
           </Section>
 
@@ -216,58 +254,60 @@ export default function DealPage({
             }
             partnerView
           >
-            {/* Summary strip */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="rounded-lg bg-[#0d2233] px-3 py-2">
-                <div className="text-[10px] text-[#c1ddfa] opacity-50">
-                  Total Obligations
-                </div>
-                <div className="text-lg font-bold text-white">
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              <div className="bg-[#F8F7F4] rounded-lg px-4 py-3 text-center">
+                <div className="text-2xl font-bold text-[#143449]">
                   {deal.adminObligations.length}
                 </div>
-              </div>
-              <div className="rounded-lg bg-[#0d2233] px-3 py-2">
-                <div className="text-[10px] text-[#c1ddfa] opacity-50">
-                  Physical Presence Required
+                <div className="text-[10px] text-[#9CA3AF]">
+                  Total Obligations
                 </div>
-                <div className="text-lg font-bold text-[#98802e]">
+              </div>
+              <div className="bg-[#FEF6E8] rounded-lg px-4 py-3 text-center">
+                <div className="text-2xl font-bold text-[#D4952A]">
                   {physicalPresenceCount}
                 </div>
+                <div className="text-[10px] text-[#9CA3AF]">
+                  Physical Presence
+                </div>
               </div>
-              <div className="rounded-lg bg-[#0d2233] px-3 py-2">
-                <div className="text-[10px] text-[#c1ddfa] opacity-50">
-                  Burden Score
-                </div>
+              <div
+                className="rounded-lg px-4 py-3 text-center"
+                style={{
+                  backgroundColor:
+                    deal.adminBurdenScore > 70 ? "#FDF0F0" : "#E8F5EE",
+                }}
+              >
                 <div
-                  className={`text-lg font-bold ${
-                    deal.adminBurdenScore > 70
-                      ? "text-red-400"
-                      : deal.adminBurdenScore > 50
-                      ? "text-[#98802e]"
-                      : "text-green-400"
-                  }`}
+                  className="text-2xl font-bold"
+                  style={{
+                    color:
+                      deal.adminBurdenScore > 70
+                        ? "#C4434A"
+                        : deal.adminBurdenScore > 50
+                        ? "#D4952A"
+                        : "#2D8659",
+                  }}
                 >
-                  {deal.adminBurdenScore}/100
+                  {deal.adminBurdenScore}
                 </div>
+                <div className="text-[10px] text-[#9CA3AF]">Burden Score</div>
               </div>
             </div>
             <AdminCalendar obligations={deal.adminObligations} />
           </Section>
 
-          {/* ========== TEAM VIEW: Sections 3 & 4 ========== */}
-
-          <div className="border-t border-[#1f506a]/20 pt-6">
-            <div className="text-[10px] uppercase tracking-widest text-[#c1ddfa] opacity-30 mb-4">
+          {/* ========== TEAM VIEW ========== */}
+          <div className="border-t border-[#E8E5DF] pt-6">
+            <div className="text-[10px] uppercase tracking-widest text-[#9CA3AF] mb-4">
               Team Reference — Governance & Structure
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* 3. Governance */}
               <Section title="3 — Governance Rights">
                 <GovernanceMatrix rights={deal.governanceRights} />
               </Section>
 
-              {/* 4. SPV & Ownership Chain */}
               <Section title="4 — SPV & Ownership Chain">
                 <SPVChain nodes={deal.spvChain} />
               </Section>

@@ -3,119 +3,136 @@
 import { Deal } from "@/lib/data";
 import Link from "next/link";
 
-// GitHub-style heatmap for the managing partner to see portfolio health at a glance
-// Rows = deals, Columns = metrics, Color = severity
+// Traffic-light matrix — the managing partner's primary tool
+// Rows sorted by worst health first so problems float to the top
 
-function getHealthColor(score: number): string {
-  if (score >= 80) return "#2d6a4f"; // green
-  if (score >= 60) return "#98802e"; // gold
-  if (score >= 40) return "#d4740e"; // orange
-  return "#c1292e"; // red
+const STATUS_COLORS = {
+  critical: "#C4434A",
+  warning: "#D4952A",
+  ok: "#2D8659",
+  neutral: "#94A3B8",
+};
+
+function dot(score: number, invert = false) {
+  const s = invert ? 100 - score : score;
+  if (s >= 75) return STATUS_COLORS.ok;
+  if (s >= 50) return STATUS_COLORS.warning;
+  return STATUS_COLORS.critical;
 }
 
-function getBurdenColor(score: number): string {
-  if (score <= 30) return "#2d6a4f";
-  if (score <= 50) return "#98802e";
-  if (score <= 70) return "#d4740e";
-  return "#c1292e";
+function countDot(count: number) {
+  if (count === 0) return STATUS_COLORS.ok;
+  if (count <= 1) return STATUS_COLORS.warning;
+  return STATUS_COLORS.critical;
 }
 
-function getOverdueColor(count: number): string {
-  if (count === 0) return "#2d6a4f";
-  if (count === 1) return "#98802e";
-  if (count <= 3) return "#d4740e";
-  return "#c1292e";
-}
+const columns = [
+  { label: "Financial\nHealth", key: "fin" },
+  { label: "Overdue\nPayments", key: "op" },
+  { label: "Admin\nBurden", key: "ab" },
+  { label: "Overdue\nFilings", key: "of" },
+  { label: "Outstanding\n($M)", key: "out" },
+];
 
 export default function PortfolioHeatmap({ deals }: { deals: Deal[] }) {
-  const cellSize = 38;
-  const gap = 3;
-  const labelWidth = 200;
-  const headerHeight = 80;
-  const columns = [
-    { label: "Financial Health", key: "financialHealth" },
-    { label: "Overdue Payments", key: "overduePayments" },
-    { label: "Outstanding ($)", key: "outstanding" },
-    { label: "Admin Burden", key: "adminBurden" },
-    { label: "Overdue Admin", key: "overdueAdmin" },
-  ];
-
-  const width = labelWidth + columns.length * (cellSize + gap) + 20;
-  const height = headerHeight + deals.length * (cellSize + gap) + 10;
+  // Sort worst health first
+  const sorted = [...deals].sort(
+    (a, b) => a.financialHealthScore - b.financialHealthScore
+  );
 
   return (
     <div className="overflow-x-auto">
-      <svg width={width} height={height} className="font-[Arsenal]">
-        {/* Column headers */}
-        {columns.map((col, ci) => (
-          <text
-            key={col.key}
-            x={labelWidth + ci * (cellSize + gap) + cellSize / 2}
-            y={headerHeight - 10}
-            textAnchor="middle"
-            fill="#c1ddfa"
-            fontSize={10}
-            transform={`rotate(-35, ${labelWidth + ci * (cellSize + gap) + cellSize / 2}, ${headerHeight - 10})`}
-          >
-            {col.label}
-          </text>
-        ))}
+      <table className="w-full text-sm">
+        <thead>
+          <tr>
+            <th className="text-left py-2 pr-4 text-[#9CA3AF] text-xs font-normal w-[220px]">
+              Company
+            </th>
+            {columns.map((col) => (
+              <th
+                key={col.key}
+                className="text-center py-2 px-3 text-[#9CA3AF] text-[10px] font-normal whitespace-pre-line leading-tight"
+              >
+                {col.label}
+              </th>
+            ))}
+            <th className="text-right py-2 pl-4 text-[#9CA3AF] text-xs font-normal">
+              Investment
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((deal) => {
+            const cells = [
+              {
+                color: dot(deal.financialHealthScore),
+                label: `${deal.financialHealthScore}%`,
+              },
+              {
+                color: countDot(deal.overduePaymentsCount),
+                label: String(deal.overduePaymentsCount),
+              },
+              {
+                color: dot(deal.adminBurdenScore, true),
+                label: `${deal.adminBurdenScore}`,
+              },
+              {
+                color: countDot(deal.overdueAdminCount),
+                label: String(deal.overdueAdminCount),
+              },
+              {
+                color:
+                  deal.totalOutstanding > 200e6
+                    ? STATUS_COLORS.critical
+                    : deal.totalOutstanding > 80e6
+                    ? STATUS_COLORS.warning
+                    : STATUS_COLORS.ok,
+                label: `$${(deal.totalOutstanding / 1e6).toFixed(0)}M`,
+              },
+            ];
 
-        {/* Rows */}
-        {deals.map((deal, ri) => {
-          const y = headerHeight + ri * (cellSize + gap);
-          const values = [
-            { color: getHealthColor(deal.financialHealthScore), label: `${deal.financialHealthScore}%` },
-            { color: getOverdueColor(deal.overduePaymentsCount), label: `${deal.overduePaymentsCount}` },
-            { color: getOverdueColor(Math.ceil(deal.totalOutstanding / 50_000_000)), label: `$${(deal.totalOutstanding / 1e6).toFixed(0)}M` },
-            { color: getBurdenColor(deal.adminBurdenScore), label: `${deal.adminBurdenScore}%` },
-            { color: getOverdueColor(deal.overdueAdminCount), label: `${deal.overdueAdminCount}` },
-          ];
-
-          return (
-            <g key={deal.id}>
-              <Link href={`/deal/${deal.id}`}>
-                <text
-                  x={labelWidth - 10}
-                  y={y + cellSize / 2 + 4}
-                  textAnchor="end"
-                  fill="#c1ddfa"
-                  fontSize={12}
-                  className="cursor-pointer hover:fill-[#98802e]"
-                >
-                  {deal.targetCompany.length > 24
-                    ? deal.targetCompany.slice(0, 22) + "…"
-                    : deal.targetCompany}
-                </text>
-              </Link>
-              {values.map((v, ci) => (
-                <g key={ci}>
-                  <rect
-                    x={labelWidth + ci * (cellSize + gap)}
-                    y={y}
-                    width={cellSize}
-                    height={cellSize}
-                    rx={4}
-                    fill={v.color}
-                    opacity={0.85}
-                    className="heatmap-cell"
-                  />
-                  <text
-                    x={labelWidth + ci * (cellSize + gap) + cellSize / 2}
-                    y={y + cellSize / 2 + 4}
-                    textAnchor="middle"
-                    fill="#ffffff"
-                    fontSize={10}
-                    fontWeight="bold"
+            return (
+              <tr
+                key={deal.id}
+                className="border-t border-[#E8E5DF] hover:bg-[#F3F1EC] transition-colors"
+              >
+                <td className="py-2.5 pr-4">
+                  <Link
+                    href={`/deal/${deal.id}`}
+                    className="text-[#143449] font-bold text-sm hover:text-[#98802e] transition-colors"
                   >
-                    {v.label}
-                  </text>
-                </g>
-              ))}
-            </g>
-          );
-        })}
-      </svg>
+                    {deal.targetCompany}
+                  </Link>
+                  <div className="text-[10px] text-[#9CA3AF]">
+                    {deal.sector} · {deal.country}
+                  </div>
+                </td>
+                {cells.map((cell, ci) => (
+                  <td key={ci} className="text-center py-2.5 px-3">
+                    <div className="flex flex-col items-center gap-1">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: cell.color }}
+                      />
+                      <span className="text-[10px] text-[#6B7280] font-bold">
+                        {cell.label}
+                      </span>
+                    </div>
+                  </td>
+                ))}
+                <td className="text-right py-2.5 pl-4">
+                  <span className="text-sm font-bold text-[#143449]">
+                    ${(deal.totalInvestment / 1e6).toFixed(0)}M
+                  </span>
+                  <div className="text-[10px] text-[#9CA3AF]">
+                    {deal.ownershipPct}% · {deal.securityType.split(" ")[0]}
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
